@@ -1,0 +1,6 @@
+data/unj.gtk.com.desktop.in
+data/unj.gtk.com.metainfo.xml.in
+data/unj.gtk.com.gschema.xml
+src/main.vala
+src/window.vala
+src/window.ui

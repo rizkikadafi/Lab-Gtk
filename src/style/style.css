@@ -1,0 +1,12 @@
+#load-button {
+  margin: 20px 300px;
+}
+
+#database {
+  margin: 0 20px;
+}
+
+#database > label {
+  border: 1px solid white;
+  padding: 8px;
+}
