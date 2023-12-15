@@ -24,7 +24,7 @@ namespace DocStructure {
                       continue;
                   }
                   int 1st_space = line.index_of (" ", 0);
-                  string command = line.substring   (0, 1st_space);
+                  string command = line.substring(0, 1st_space);
                   Regex pattern = new Regex("\\s+");
                   //string[] words = line.split (" ");
                   string[] words = pattern.split(line[1:]);
@@ -79,7 +79,8 @@ namespace DocStructure {
                     continue;
                 }
                 int 1st_space = line.index_of (" ", 0);
-                string command = line.substring   (0, 1st_space);
+                string command = line.substring   (0, 1st_space).up();
+                // print(command + "\n");
                 Regex pattern = new Regex("\\s+");
                 //string[] words = line.split (" ");
                 string[] words = pattern.split(line[1:]);

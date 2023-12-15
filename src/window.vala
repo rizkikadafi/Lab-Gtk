@@ -103,7 +103,10 @@ namespace LabGtk {
         database.attach(name, 1, row, 1, 1);
         database.attach(detail_btn, 2, row, 1, 1);
 
-        pages.add_named(build_grid(), doc.getUid().to_string());
+        Gtk.ScrolledWindow swin = new Gtk.ScrolledWindow();
+        swin.set_child(build_grid());
+
+        pages.add_named(swin, doc.getUid().to_string());
         detail_btn.clicked.connect((btn) => {
           message(pages.get_visible_child_name());
           pages.set_visible_child_name(btn.get_id());
@@ -117,42 +120,37 @@ namespace LabGtk {
         foreach (var heading in doc.metadata.heading) {
           model.append(new Gtk.Label(heading.key));
         }
-        /*
-        foreach (var heading in doc.metadata.heading) {
-          model.append(new Gtk.Label(heading.key));
 
-          foreach (Content content in doc.list) {
-            model.append(new Gtk.Label(content.getUid().to_string()));
-            foreach (var item in content.map) {
-              AttributeType type = doc.metadata.heading.get(heading.key).type;
-              switch (type) {
-                case AttributeType.NUMERIC:
-                  try {
-                    Gtk.Label label = new Gtk.Label(content.getDoubleEntry(item.key).to_string());
-                    model.append(label);
-                  } catch (TypeError e) { message(e.message); }
-                  break;
-                case AttributeType.REAL:
-                  try {
-                    Gtk.Label label = new Gtk.Label(content.getFloatEntry(item.key).to_string());
-                    model.append(label);
-                  } catch (TypeError e) { message(e.message); }
-                  break;
-                case AttributeType.NOMINAL:
-                  try {
-                    Gtk.Label label = new Gtk.Label(content.getStringEntry(item.key));
-                    model.append(label);
-                  } catch (TypeError e) { message(e.message); }
-                  break;
-              }
+        foreach (Content content in doc.list) {
+          model.append(new Gtk.Label(content.getUid().to_string()));
+          foreach (var item in content.map) {
+            AttributeType type = doc.metadata.heading.get(item.key).type;
+            switch (type) {
+              case AttributeType.NUMERIC:
+                try {
+                  Gtk.Label label = new Gtk.Label(content.getDoubleEntry(item.key).to_string());
+                  model.append(label);
+                } catch (TypeError e) { message(e.message); }
+                break;
+              case AttributeType.REAL:
+                try {
+                  Gtk.Label label = new Gtk.Label(content.getFloatEntry(item.key).to_string());
+                  model.append(label);
+                } catch (TypeError e) { message(e.message); }
+                break;
+              case AttributeType.NOMINAL:
+                try {
+                  Gtk.Label label = new Gtk.Label(content.getStringEntry(item.key));
+                  model.append(label);
+                } catch (TypeError e) { message(e.message); }
+                break;
             }
           }
         }
-        */
-
 
         Gtk.SingleSelection x = new Gtk.SingleSelection(model);
         Gtk.GridView gridview = new Gtk.GridView(x, new Gtk.BuilderListItemFactory.from_resource(null, "/unj/gtk/com/ui/grid.ui"));
+        gridview.set_min_columns(doc.metadata.heading.size + 1);
         gridview.set_max_columns(doc.metadata.heading.size + 1);
 
         return gridview;

@@ -66,7 +66,7 @@ namespace DocStructure {
               res += upper_hex.to_string();
               res += lower_hex.to_string();
            }
-           print(res + "\n");
+           // print(res + "\n");
            return res;
       }
 
@@ -91,7 +91,7 @@ namespace DocStructure {
           //get Metadata
           Metadata meta = this.doc.metadata;
           KeyMetadata keyMeta = meta.heading.get(attributeName);
-          if(keyMeta.type == AttributeType.NUMERIC){
+          if(keyMeta.type == AttributeType.REAL){
               Any<float?> any = this.getEntry(attributeName);
               return any.val;
           }
@@ -101,7 +101,7 @@ namespace DocStructure {
       public double getDoubleEntry(string attributeName) throws TypeError{
           Metadata meta = this.doc.metadata;
           KeyMetadata keyMeta = meta.heading.get(attributeName);
-          if(keyMeta.type == AttributeType.REAL){
+          if(keyMeta.type == AttributeType.NUMERIC){
               Any<double?> any = this.getEntry(attributeName);
               return any.val;
           }
