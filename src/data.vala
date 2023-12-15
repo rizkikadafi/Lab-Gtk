@@ -9,8 +9,6 @@ class Data {
       {"data4.1", "data4.2", "data4.3"},
       {"data5.1", "data5.2", "data5.3"},
     };
-
-    
   }
 
   public string[,] get_data() {

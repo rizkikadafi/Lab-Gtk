@@ -1,13 +1,15 @@
 using GLib;
 
-class Any<G>: GLib.Object {
+namespace DocStructure {
+  public class Any<G>: GLib.Object {
 
-    public G? val {get;set;}
+      public G? val {get;set;}
 
-    /**
-     * Default constructor instantiate the class with empty values
-     */
-    public Any(G data) {
-        this.val = data;
-    }
+      /**
+       * Default constructor instantiate the class with empty values
+       */
+      public Any(G data) {
+          this.val = data;
+      }
+  }
 }

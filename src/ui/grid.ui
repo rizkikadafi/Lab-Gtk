@@ -1,0 +1,17 @@
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <binding name="label">
+          <lookup name="label" type="GtkLabel">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+        <style>
+          <class name="item" />
+        </style>
+      </object>
+    </property>
+  </template>
+</interface>
+

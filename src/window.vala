@@ -17,6 +17,7 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+using DocStructure;
 
 namespace LabGtk {
     [GtkTemplate (ui = "/unj/gtk/com/ui/window.ui")]
@@ -25,64 +26,138 @@ namespace LabGtk {
       private unowned Gtk.Button load_button;
       [GtkChild]
       private unowned Gtk.Grid database;
+      [GtkChild]
+      private unowned Gtk.Stack pages;
 
       Database db = new Database();
       Document doc;
+      Gtk.Button detail_btn;
 
       public Window (Gtk.Application app) {
         var cssProvider = new Gtk.CssProvider ();
         cssProvider.load_from_resource ("/unj/gtk/com/style/style.css");
         Gtk.StyleContext.add_provider_for_display (Gdk.Display.get_default (), cssProvider, 1);
+
         
         Object (application: app);
+        message("%s", pages.get_visible_child_name());
 
+
+        message("%s", pages.get_visible_child_name());
+
+
+        // pages.add_named(gridview, "content");
+        // pages.set_visible_child_name("content");
 
         load_button.clicked.connect (load_button_handler);
       }
 
+      // load button handler
       public void load_button_handler() {
         Gtk.FileChooserDialog load_file = new Gtk.FileChooserDialog("Choose File", this, Gtk.FileChooserAction.OPEN, "_Cancel", Gtk.ResponseType.CANCEL, "_Open", Gtk.ResponseType.ACCEPT);
+        Gtk.Button test = load_file.get_widget_for_response(Gtk.ResponseType.CANCEL) as Gtk.Button;
+        message(test.get_label());
         load_file.present();
-        load_file.response.connect((dialog, response) => {
+        test.clicked.connect(() => {
+          message("cancel button clicked\n");
+        });
+        load_file.response.connect(dialog_callback);
+      }
+
+      // dialog callback
+      public void dialog_callback(Gtk.Dialog dialog, int response) {
+          Gtk.FileChooserDialog chooser = dialog as Gtk.FileChooserDialog;
           if(response == Gtk.ResponseType.ACCEPT){
             message("File Berhasil Dipilih\n");
-            message("%s\n", load_file.get_file().get_basename());
+            message("%s\n", chooser.get_file().get_basename());
 
-            doc = IOUtil.read_file(load_file.get_file());
+            // read file
+            doc = IOUtil.read_file(chooser.get_file());
+
+            // add doc to db
             db.add_document(doc);
-            add_doc();
 
-            load_file.close();
+            // build ui
+            add_doc_ui();
+
+            chooser.close();
           }
 
           if(response == Gtk.ResponseType.CANCEL){
              message("File Batal Dipilih");
-             load_file.close();
+             chooser.close();
           }
-        });
       }
 
-      public void add_doc() {
+      public void add_doc_ui() {
         Gtk.Label id = new Gtk.Label(doc.getUid().to_string());
         Gtk.Label name = new Gtk.Label(doc.name);
-        Gtk.Button delete_btn = new Gtk.Button.with_label("Delete");
-        delete_btn.set_id(doc.getUid().to_string());
+
+
+        detail_btn = new Gtk.Button.with_label("Detail");
+        detail_btn.set_id(doc.getUid().to_string());
 
         int row = (int)db.get_size() + 1;
 
         database.attach(id, 0, row, 1, 1);
         database.attach(name, 1, row, 1, 1);
-        database.attach(delete_btn, 2, row, 1, 1);
+        database.attach(detail_btn, 2, row, 1, 1);
 
-        delete_btn.clicked.connect(() => {
-          db.delete_doc((int)delete_btn.get_id());
-          database.remove_row(row);
+        pages.add_named(build_grid(), doc.getUid().to_string());
+        detail_btn.clicked.connect((btn) => {
+          message(pages.get_visible_child_name());
+          pages.set_visible_child_name(btn.get_id());
         });
-
       }
 
-      public void del_doc() {
+      Gtk.GridView build_grid() {
+        GLib.ListStore model = new GLib.ListStore(GLib.Type.OBJECT);
+        model.append(new Gtk.Label("id"));
 
+        foreach (var heading in doc.metadata.heading) {
+          model.append(new Gtk.Label(heading.key));
+        }
+        /*
+        foreach (var heading in doc.metadata.heading) {
+          model.append(new Gtk.Label(heading.key));
+
+          foreach (Content content in doc.list) {
+            model.append(new Gtk.Label(content.getUid().to_string()));
+            foreach (var item in content.map) {
+              AttributeType type = doc.metadata.heading.get(heading.key).type;
+              switch (type) {
+                case AttributeType.NUMERIC:
+                  try {
+                    Gtk.Label label = new Gtk.Label(content.getDoubleEntry(item.key).to_string());
+                    model.append(label);
+                  } catch (TypeError e) { message(e.message); }
+                  break;
+                case AttributeType.REAL:
+                  try {
+                    Gtk.Label label = new Gtk.Label(content.getFloatEntry(item.key).to_string());
+                    model.append(label);
+                  } catch (TypeError e) { message(e.message); }
+                  break;
+                case AttributeType.NOMINAL:
+                  try {
+                    Gtk.Label label = new Gtk.Label(content.getStringEntry(item.key));
+                    model.append(label);
+                  } catch (TypeError e) { message(e.message); }
+                  break;
+              }
+            }
+          }
+        }
+        */
+
+
+        Gtk.SingleSelection x = new Gtk.SingleSelection(model);
+        Gtk.GridView gridview = new Gtk.GridView(x, new Gtk.BuilderListItemFactory.from_resource(null, "/unj/gtk/com/ui/grid.ui"));
+        gridview.set_max_columns(doc.metadata.heading.size + 1);
+
+        return gridview;
       }
+
+
     }
 }

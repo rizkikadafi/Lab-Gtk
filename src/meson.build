@@ -1,5 +1,5 @@
 lab_gtk_sources = [
-  'main.vala', 'application.vala', 'window.vala', 'data.vala',
+  'main.vala', 'application.vala', 'window.vala', 'data.vala', 'model.vala',
   'model/document.vala', 'model/content.vala', 'model/metadata.vala',
   'model/type.vala', 'model/any.vala', 'model/database.vala',
   'model/struct/node.vala', 'model/struct/nodes.vala',
