@@ -6,6 +6,15 @@ namespace DocStructure {
       documents = new Gee.ArrayList<Document>();
     }
 
+    public Document? get_document_by_id(int uid) {
+      foreach (Document document in documents) {
+        if(document.getUid() == uid) {
+          return document;
+        }
+      }
+      return null;
+    }
+
     public void add_document(Document document) {
       documents.add(document);
     }

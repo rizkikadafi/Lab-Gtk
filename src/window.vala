@@ -104,13 +104,24 @@ namespace LabGtk {
         database.attach(detail_btn, 2, row, 1, 1);
 
         Gtk.ScrolledWindow swin = new Gtk.ScrolledWindow();
-        swin.set_child(build_grid());
-
         pages.add_named(swin, doc.getUid().to_string());
-        detail_btn.clicked.connect((btn) => {
-          message(pages.get_visible_child_name());
-          pages.set_visible_child_name(btn.get_id());
-        });
+        Gtk.Box box = new Gtk.Box(Gtk.Orientation.VERTICAL, 3);
+        Gtk.Button back_btn = new Gtk.Button.with_label("Back");
+        back_btn.clicked.connect(back_btn_handler);
+        box.append(back_btn);
+        box.append(build_grid());
+        swin.set_child(box);
+
+        detail_btn.clicked.connect(detail_btn_handler);
+      }
+
+      private void back_btn_handler() {
+        pages.set_visible_child_name("dashboard");
+      }
+
+      private void detail_btn_handler(Gtk.Button btn) {
+        message(pages.get_visible_child_name());
+        pages.set_visible_child_name(btn.get_id());
       }
 
       Gtk.GridView build_grid() {
@@ -148,8 +159,7 @@ namespace LabGtk {
           }
         }
 
-        Gtk.SingleSelection x = new Gtk.SingleSelection(model);
-        Gtk.GridView gridview = new Gtk.GridView(x, new Gtk.BuilderListItemFactory.from_resource(null, "/unj/gtk/com/ui/grid.ui"));
+        Gtk.GridView gridview = new Gtk.GridView(new Gtk.NoSelection(model), new Gtk.BuilderListItemFactory.from_resource(null, "/unj/gtk/com/ui/grid.ui"));
         gridview.set_min_columns(doc.metadata.heading.size + 1);
         gridview.set_max_columns(doc.metadata.heading.size + 1);
 
